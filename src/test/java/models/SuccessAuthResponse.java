@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Support {
+public class SuccessAuthResponse {
 
-    private String url;
-    private String text;
+    private String token;
 }

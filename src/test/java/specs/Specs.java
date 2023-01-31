@@ -40,7 +40,13 @@ public class Specs {
                 .build();
     }
 
-    public static void installSpecs(RequestSpecification request, ResponseSpecification response) {
+    public static ResponseSpecification responseSpec404() {
+        return new ResponseSpecBuilder()
+                .expectStatusCode(404)
+                .build();
+    }
+
+    public static void useSpecs(RequestSpecification request, ResponseSpecification response) {
         RestAssured.requestSpecification = request;
         RestAssured.responseSpecification = response;
     }

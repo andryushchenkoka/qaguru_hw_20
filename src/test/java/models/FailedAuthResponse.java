@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Auth {
+public class FailedAuthResponse {
 
-    private String email;
-    private String password;
+    private String error;
 }
