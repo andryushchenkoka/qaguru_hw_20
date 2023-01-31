@@ -19,9 +19,7 @@ import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.core.Is.is;
 import static tags.Tags.*;
 
-public class UserTests {
-    String URL = "https://reqres.in/",
-            USERS_ENDPOINT = "api/users/";
+public class UserTests extends BaseTest {
 
     @ValueSource(ints = {
             1, 2

@@ -11,10 +11,7 @@ import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.core.Is.is;
 import static tags.Tags.*;
 
-public class UserRegisterTests {
-
-    String URL = "https://reqres.in/",
-            REGISTER_ENDPOINT = "/api/register/";
+public class UserRegisterTests extends BaseTest {
 
     @Test
     @Tags({@Tag(POSITIVE), @Tag(REGISTER), @Tag(POST_REQUEST)})

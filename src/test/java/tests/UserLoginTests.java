@@ -10,10 +10,7 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static tags.Tags.*;
 
-public class UserLoginTests {
-
-    String URL = "https://reqres.in/",
-            LOGIN_ENDPOINT = "/api/login";
+public class UserLoginTests extends BaseTest {
 
     @Test
     @Tags({@Tag(POSITIVE), @Tag(LOGIN), @Tag(POST_REQUEST)})
