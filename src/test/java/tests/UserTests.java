@@ -1,46 +1,40 @@
 package tests;
 
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
-import org.junit.jupiter.api.Test;
+import models.SuccessUserCreate;
+import models.SuccessUserUpdate;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import pojo.User;
-import pojo.UserWorker;
+import models.User;
+import models.UserWorker;
 
 import java.util.List;
 
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
-import static io.restassured.http.ContentType.JSON;
-import static org.hamcrest.core.Is.is;
 import static tags.Tags.*;
+import static specs.Specs.*;
 
-public class UserTests {
-    String URL = "https://reqres.in/",
-            USERS_ENDPOINT = "api/users/";
+public class UserTests extends BaseTest {
 
     @ValueSource(ints = {
             1, 2
     })
     @ParameterizedTest
+    @DisplayName("Получить список пользователей")
     @Tags({@Tag(POSITIVE), @Tag(GET_REQUEST)})
     public void getUsersListTest(int page) {
-        step("Получить список пользователей на {0} странице", () -> {
+        step("Получить список пользователей", () -> {
+            useSpecs(requestSpec(URL), responseSpec200());
             List<User> users = given()
-                    .baseUri(URL)
-                    .when().log().all()
-                    .contentType(JSON)
+                    .when()
                     .param("page", page)
                     .get(USERS_ENDPOINT)
                     .then().log().all()
-                    .statusCode(200)
                     .extract().body().jsonPath().getList("data", User.class);
-
-            Assertions.assertNotNull(users.size());
+            Assertions.assertEquals(6, users.size());
         });
     }
 
@@ -48,103 +42,86 @@ public class UserTests {
             "1, George",
             "6, Tracey",
             "7, Michael",
-            "12, Rachel",
+            "12, Rachel"
     })
     @ParameterizedTest
+    @DisplayName("Email содержит имя пользователя")
     @Tags({@Tag(POSITIVE), @Tag(GET_REQUEST)})
     public void getUserTest(int userId, String name) {
-        step("Email содержит имя {0} пользователя - {1}", () -> {
-            Response response = given()
-                    .baseUri(URL)
-                    .when().log().all()
-                    .contentType(JSON)
+        step("Email содержит имя пользователя", () -> {
+            useSpecs(requestSpec(URL), responseSpec200());
+            User user = given()
                     .param("id", userId)
                     .get(USERS_ENDPOINT)
                     .then().log().all()
-                    .statusCode(200)
-                    .body("data.first_name", is(name))
-                    .extract().response();
-
-            Assertions.assertTrue(response.path("data.email").toString().contains(name.toLowerCase()));
+                    .extract().jsonPath().getObject("data", User.class);
+            Assertions.assertEquals(name, user.getFirstName().toString());
+            Assertions.assertTrue(user.getEmail().toString().toLowerCase().contains(name.toLowerCase()));
         });
     }
 
     @Test
+    @DisplayName("Поиск пользователя с несуществующим id")
     @Tags({@Tag(NEGATIVE), @Tag(GET_REQUEST)})
     public void getUserNegativeTest() {
         step("Поиск пользователя с несуществующим id", () -> {
+            useSpecs(requestSpec(URL), responseSpec404());
             Response response = given()
-                    .baseUri(URL)
-                    .when().log().all()
-                    .contentType(JSON)
-                    .param("id", 13)
+                    .param("id", 23)
                     .get(USERS_ENDPOINT)
                     .then().log().all()
-                    .statusCode(404)
                     .extract().response();
-
-            Assertions.assertEquals(response.path("").toString(), "{}");
+            Assertions.assertEquals("{}", response.path("").toString());
         });
     }
 
     @Test
+    @DisplayName("Создание нового пользователя")
     @Tags({@Tag(POSITIVE), @Tag(POST_REQUEST)})
     public void createUserTest() {
         step("Создание нового пользователя", () -> {
-            UserWorker userForCreate = new UserWorker();
-            userForCreate.setName("Steve Jobs");
-            userForCreate.setJob("Programmer");
-            Response response = given()
-                    .baseUri(URL)
-                    .contentType(JSON)
-                    .when().log().all()
+            useSpecs(requestSpec(URL), responseSpec201());
+            UserWorker userForCreate = new UserWorker("Steve Jobs", "Programmer");
+            SuccessUserCreate createdUser = given()
+                    .when()
                     .body(userForCreate)
                     .post(USERS_ENDPOINT)
                     .then().log().all()
-                    .statusCode(201)
-                    .body("name", is(userForCreate.getName()))
-                    .body("job", is(userForCreate.getJob()))
-                    .extract().response();
-            String createdUserId = response.path("id").toString();
-            System.out.println(createdUserId);
+                    .extract().as(SuccessUserCreate.class);
+            Assertions.assertEquals(userForCreate.getName(), createdUser.getName());
+            Assertions.assertEquals(userForCreate.getJob(), createdUser.getJob());
         });
     }
 
     @Test
+    @DisplayName("Обновить данные пользователя")
     @Tags({@Tag(POSITIVE), @Tag(PUT_REQUEST)})
     public void updateUserTest() {
         step("Обновить данные пользователя", () -> {
-            UserWorker userForUpdate = new UserWorker();
-            userForUpdate.setName("Linus Torvalds");
-            userForUpdate.setJob("God");
-            Response response = given()
-                    .baseUri(URL)
-                    .contentType(JSON)
-                    .when().log().all()
+            useSpecs(requestSpec(URL), responseSpec200());
+            UserWorker userForUpdate = new UserWorker("Linus Torvalds", "God");
+            SuccessUserUpdate updatedUser = given()
+                    .when()
                     .body(userForUpdate)
-                    .param("id", 1)
                     .put(USERS_ENDPOINT)
                     .then().log().all()
-                    .statusCode(200)
-                    .body("name", is(userForUpdate.getName()))
-                    .body("job", is(userForUpdate.getJob()))
-                    .extract().response();
-            String updateTime = response.path("updatedAt").toString();
-            System.out.println(updateTime);
+                    .extract().as(SuccessUserUpdate.class);
+            Assertions.assertEquals(userForUpdate.getName(), updatedUser.getName());
+            Assertions.assertEquals(userForUpdate.getJob(), updatedUser.getJob());
         });
     }
 
     @Test
+    @DisplayName("Удалить пользователя")
     @Tags({@Tag(POSITIVE), @Tag(DELETE_REQUEST)})
     public void deleteUserTest() {
         step("Удалить пользователя", () -> {
+            useSpecs(requestSpec(URL), responseSpec204());
             given()
-                    .baseUri(URL)
-                    .when().log().all()
+                    .when()
                     .param("id", 3)
                     .delete(USERS_ENDPOINT)
-                    .then().log().all()
-                    .statusCode(204);
+                    .then().log().all();
         });
     }
 }

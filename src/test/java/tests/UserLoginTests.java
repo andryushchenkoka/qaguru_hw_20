@@ -1,51 +1,48 @@
 package tests;
 
-import io.restassured.response.Response;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
-import org.junit.jupiter.api.Test;
-import pojo.Auth;
+import models.FailedAuthResponse;
+import models.SuccessAuthResponse;
+import org.junit.jupiter.api.*;
+import models.Auth;
 
+import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
-import static io.restassured.http.ContentType.JSON;
+import static specs.Specs.*;
 import static tags.Tags.*;
 
-public class UserLoginTests {
-
-    String URL = "https://reqres.in/",
-            LOGIN_ENDPOINT = "/api/login";
+public class UserLoginTests extends BaseTest {
 
     @Test
+    @DisplayName("Логин пользователя с валидными данными")
     @Tags({@Tag(POSITIVE), @Tag(LOGIN), @Tag(POST_REQUEST)})
     public void loginTest() {
-        Auth authData = new Auth();
-        authData.setEmail("eve.holt@reqres.in");
-        authData.setPassword("cityslicka");
-        Response response = given()
-                .baseUri(URL)
-                .when().log().all()
-                .contentType(JSON)
-                .body(authData)
-                .post(LOGIN_ENDPOINT)
-                .then().log().all()
-                .statusCode(200)
-                .extract().response();
-        String authToken = response.path("token").toString();
-        System.out.println(authToken);
+        step("Логин пользователя с валидными данными", () -> {
+            useSpecs(requestSpec(URL), responseSpec200());
+            Auth authData = new Auth("eve.holt@reqres.in", "cityslicka");
+            SuccessAuthResponse authResponse = given()
+                    .when()
+                    .body(authData)
+                    .post(LOGIN_ENDPOINT)
+                    .then().log().all()
+                    .extract().as(SuccessAuthResponse.class);
+            Assertions.assertNotNull(authResponse.getToken());
+        });
     }
 
     @Test
+    @DisplayName("Логин пользователя без пароля")
     @Tags({@Tag(NEGATIVE), @Tag(LOGIN), @Tag(POST_REQUEST)})
     public void loginNegativeTest() {
-        Auth authData = new Auth();
-        authData.setEmail("peter@klaven");
-        given()
-                .baseUri(URL)
-                .when().log().all()
-                .contentType(JSON)
-                .body(authData)
-                .post(LOGIN_ENDPOINT)
-                .then().log().all()
-                .statusCode(400);
+        step("Логин пользователя без пароля", () -> {
+            useSpecs(requestSpec(URL), responseSpec400());
+            Auth authData = new Auth("peter@klaven", null);
+            FailedAuthResponse authResponse = given()
+                    .when()
+                    .body(authData)
+                    .post(LOGIN_ENDPOINT)
+                    .then().log().all()
+                    .extract().as(FailedAuthResponse.class);
+            Assertions.assertEquals("Missing password", authResponse.getError());
+        });
     }
 }
