@@ -22,7 +22,7 @@ public class Specs {
                 .build();
     }
 
-    public static void installSpecification(RequestSpecification request, ResponseSpecification response) {
+    public static void installSpecs(RequestSpecification request, ResponseSpecification response) {
         RestAssured.requestSpecification = request;
         RestAssured.responseSpecification = response;
     }

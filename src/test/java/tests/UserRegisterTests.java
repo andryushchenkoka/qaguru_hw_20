@@ -4,7 +4,7 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
-import pojo.Auth;
+import models.Auth;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
