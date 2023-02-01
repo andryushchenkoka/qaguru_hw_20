@@ -1,4 +1,4 @@
-package tests;
+package tests.lombok;
 
 import io.restassured.response.Response;
 import models.SuccessUserCreate;
@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import models.User;
 import models.UserWorker;
+import tests.BaseTest;
 
 import java.util.List;
 

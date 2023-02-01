@@ -1,9 +1,10 @@
-package tests;
+package tests.lombok;
 
 import models.FailedAuthResponse;
 import models.SuccessRegResponse;
 import org.junit.jupiter.api.*;
 import models.Auth;
+import tests.BaseTest;
 
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
