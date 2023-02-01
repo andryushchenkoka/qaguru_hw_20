@@ -16,6 +16,7 @@ ext {
     restAssuredVersion = "4.5.1"
     lombokVersion = "1.18.24"
     allureVersion = "2.19.0"
+    allureRestAssured = "2.20.1"
     aspectjWeaverVersion = "1.9.8"
     jacksonVersion = "2.14.1"
     slf4jVersion = "2.0.5"
@@ -40,6 +41,7 @@ dependencies {
             "org.junit.jupiter:junit-jupiter:${junitVersion}",
             "org.projectlombok:lombok:${lombokVersion}",
             "io.rest-assured:rest-assured:${restAssuredVersion}",
+            "io.qameta.allure:allure-rest-assured:${allureRestAssured}",
             "org.aspectj:aspectjweaver:${aspectjWeaverVersion}",
             "io.qameta.allure:allure-selenide:$allureVersion",
             "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}",
