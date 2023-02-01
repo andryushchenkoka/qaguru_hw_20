@@ -3,7 +3,7 @@ package tests;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeAll;
 
-import static helpers.CustomAllureListener.*;
+import static helpers.report.CustomAllureListener.*;
 
 public class BaseTest {
 

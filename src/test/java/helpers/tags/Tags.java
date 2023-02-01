@@ -1,4 +1,4 @@
-package tags;
+package helpers.tags;
 
 public class Tags {
 

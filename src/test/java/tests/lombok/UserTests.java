@@ -15,7 +15,6 @@ import java.util.List;
 
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
-import static tags.Tags.*;
 import static specs.Specs.*;
 
 public class UserTests extends BaseTest {
