@@ -6,6 +6,7 @@ import org.junit.jupiter.api.*;
 import models.Auth;
 import tests.BaseTest;
 
+import static helpers.tags.Tags.*;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static specs.Specs.*;

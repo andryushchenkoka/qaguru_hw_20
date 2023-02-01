@@ -7,9 +7,7 @@ import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static specs.Specs.*;
-import static specs.Specs.responseSpec200;
-import static helpers.tags.Tags.GET_REQUEST;
-import static helpers.tags.Tags.POSITIVE;
+import static helpers.tags.Tags.*;
 
 public class GroovyTests extends BaseTest {
 

@@ -13,6 +13,7 @@ import tests.BaseTest;
 
 import java.util.List;
 
+import static helpers.tags.Tags.*;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static specs.Specs.*;
